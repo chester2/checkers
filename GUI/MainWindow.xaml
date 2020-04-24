@@ -34,219 +34,11 @@
                          Color="#FFE7E7E7" />
         <SolidColorBrush x:Key="Color::PieceWhiteBorder"
                          Color="White" />
-        <!--#endregion-->
-
-        <!--#region Piece Template Helpers-->
-        <DropShadowEffect x:Key="Shadow::Piece"
-                          BlurRadius="3"
-                          Opacity=".3"
-                          ShadowDepth="3" />
-
-        <sys:Double x:Key="Double::DestinationDiameter">12</sys:Double>
-        <sys:Double x:Key="Double::PieceBorderDiameter">40</sys:Double>
-        <sys:Double x:Key="Double::PieceDiameter">34</sys:Double>
-        <sys:Double x:Key="Double::PieceCrownDiameter">24</sys:Double>
-
-        <Style x:Key="Style::PieceCommon"
-               TargetType="Ellipse">
-            <Setter Property="HorizontalAlignment"
-                    Value="Center" />
-            <Setter Property="VerticalAlignment"
-                    Value="Center" />
-        </Style>
-
-        <Style x:Key="Style::PieceCrown"
-               TargetType="Image">
-            <Setter Property="HorizontalAlignment"
-                    Value="Center" />
-            <Setter Property="VerticalAlignment"
-                    Value="Center" />
-            <Setter Property="Width"
-                    Value="{StaticResource Double::PieceCrownDiameter}" />
-            <Setter Property="Height"
-                    Value="{StaticResource Double::PieceCrownDiameter}" />
-        </Style>
-        <!--#endregion-->
-
-        <!--#region Piece Templates-->
-        <ControlTemplate x:Key="Template::Destination"
-                         TargetType="ContentControl">
-            <Grid>
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="#4000"
-                         Width="{StaticResource Double::DestinationDiameter}"
-                         Height="{StaticResource Double::DestinationDiameter}">
-                    <Ellipse.Effect>
-                        <DropShadowEffect BlurRadius="5"
-                                          ShadowDepth="2"
-                                          RenderingBias="Quality" />
-                    </Ellipse.Effect>
-                </Ellipse>
-            </Grid>
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="Template::BlackSingle"
-                         TargetType="ContentControl">
-            <Grid>
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceBlackBorder}"
-                         Width="{StaticResource Double::PieceBorderDiameter}"
-                         Height="{StaticResource Double::PieceBorderDiameter}"
-                         Effect="{StaticResource Shadow::Piece}" />
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceBlack}"
-                         Width="{StaticResource Double::PieceDiameter}"
-                         Height="{StaticResource Double::PieceDiameter}" />
-            </Grid>
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="Template::BlackDouble"
-                         TargetType="ContentControl">
-            <Grid>
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceBlackBorder}"
-                         Width="{StaticResource Double::PieceBorderDiameter}"
-                         Height="{StaticResource Double::PieceBorderDiameter}"
-                         Effect="{StaticResource Shadow::Piece}" />
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceBlack}"
-                         Width="{StaticResource Double::PieceDiameter}"
-                         Height="{StaticResource Double::PieceDiameter}" />
-                <Image Style="{StaticResource Style::PieceCrown}"
-                       Source="Resources/CrownWhite.png" />
-            </Grid>
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="Template::WhiteSingle"
-                         TargetType="ContentControl">
-            <Grid>
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceWhiteBorder}"
-                         Width="{StaticResource Double::PieceBorderDiameter}"
-                         Height="{StaticResource Double::PieceBorderDiameter}"
-                         Effect="{StaticResource Shadow::Piece}" />
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceWhite}"
-                         Width="{StaticResource Double::PieceDiameter}"
-                         Height="{StaticResource Double::PieceDiameter}" />
-            </Grid>
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="Template::WhiteDouble"
-                         TargetType="ContentControl">
-            <Grid>
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceWhiteBorder}"
-                         Width="{StaticResource Double::PieceBorderDiameter}"
-                         Height="{StaticResource Double::PieceBorderDiameter}"
-                         Effect="{StaticResource Shadow::Piece}" />
-                <Ellipse Style="{StaticResource Style::PieceCommon}"
-                         Fill="{StaticResource Color::PieceWhite}"
-                         Width="{StaticResource Double::PieceDiameter}"
-                         Height="{StaticResource Double::PieceDiameter}" />
-                <Image Style="{StaticResource Style::PieceCrown}"
-                       Source="Resources/CrownBlack.png" />
-            </Grid>
-        </ControlTemplate>
-        <!--#endregion-->
-
-        <!--#region Piece Style-->
-        <Style x:Key="Style::Piece"
-               TargetType="ContentControl">
-            <Style.Triggers>
-
-                <!--Destionation Square-->
-                <DataTrigger Binding="{Binding State}"
-                             Value="{x:Static local:SquareState.Destination}">
-                    <Setter Property="Template"
-                            Value="{StaticResource Template::Destination}" />
-                </DataTrigger>
-
-                <!--Black Single-->
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding State}"
-                                   Value="{x:Static local:SquareState.Occupied}" />
-                        <Condition Binding="{Binding Piece.Color}"
-                                   Value="{x:Static chklib:Color.Black}" />
-                        <Condition Binding="{Binding Piece.Type}"
-                                   Value="{x:Static chklib:PieceType.Single}" />
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Template"
-                            Value="{StaticResource Template::BlackSingle}" />
-                </MultiDataTrigger>
-
-                <!--Black Double-->
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding State}"
-                                   Value="{x:Static local:SquareState.Occupied}" />
-                        <Condition Binding="{Binding Piece.Color}"
-                                   Value="{x:Static chklib:Color.Black}" />
-                        <Condition Binding="{Binding Piece.Type}"
-                                   Value="{x:Static chklib:PieceType.Double}" />
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Template"
-                            Value="{StaticResource Template::BlackDouble}" />
-                </MultiDataTrigger>
-
-                <!--White Single-->
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding State}"
-                                   Value="{x:Static local:SquareState.Occupied}" />
-                        <Condition Binding="{Binding Piece.Color}"
-                                   Value="{x:Static chklib:Color.White}" />
-                        <Condition Binding="{Binding Piece.Type}"
-                                   Value="{x:Static chklib:PieceType.Single}" />
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Template"
-                            Value="{StaticResource Template::WhiteSingle}" />
-                </MultiDataTrigger>
-
-                <!--White Double-->
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding State}"
-                                   Value="{x:Static local:SquareState.Occupied}" />
-                        <Condition Binding="{Binding Piece.Color}"
-                                   Value="{x:Static chklib:Color.White}" />
-                        <Condition Binding="{Binding Piece.Type}"
-                                   Value="{x:Static chklib:PieceType.Double}" />
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Template"
-                            Value="{StaticResource Template::WhiteDouble}" />
-                </MultiDataTrigger>
-
-            </Style.Triggers>
-        </Style>
-        <!--#endregion-->
-
-        <!--#region Square Style-->
-        <Style x:Key="Style::SquareFill"
-               TargetType="Grid">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SquareColor}"
-                             Value="{x:Static local:SquareColor.Light}">
-                    <Setter Property="Background"
-                            Value="{StaticResource Color::SquareLight}" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding SquareColor}"
-                             Value="{x:Static local:SquareColor.Dark}">
-                    <Setter Property="Background"
-                            Value="{StaticResource Color::SquareDark}" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
+        <SolidColorBrush x:Key="Color::PieceFocusBorder"
+                         Color="Orange" />
         <!--#endregion-->
 
         <!--#region Theme Styles-->
-        <DropShadowEffect x:Key="Shadow::Container"
-                          BlurRadius="10"
-                          Opacity="0.7"
-                          RenderingBias="Quality"
-                          ShadowDepth="7" />
-
         <Style x:Key="Style::Text"
                TargetType="TextBlock">
             <Setter Property="FontWeight"
@@ -265,6 +57,140 @@
                     Value="{StaticResource Color::ThemeLight}" />
             <Setter Property="Width"
                     Value="100" />
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Square Styles-->
+        <Style x:Key="Style::SquareFill"
+               TargetType="Grid">
+            <Setter Property="Background"
+                    Value="{StaticResource Color::SquareDark}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SquareColor}"
+                             Value="{x:Static local:SquareColor.Light}">
+                    <Setter Property="Background"
+                            Value="{StaticResource Color::SquareLight}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Piece Styles-->
+        <Style x:Key="ConditionalStyle::DestinationVisibility"
+               TargetType="Ellipse">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding State}"
+                             Value="{x:Static local:SquareState.Empty}">
+                    <Setter Property="Visibility"
+                            Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}"
+                             Value="{x:Static local:SquareState.Destination}">
+                    <Setter Property="Visibility"
+                            Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}"
+                             Value="{x:Static local:SquareState.Occupied}">
+                    <Setter Property="Visibility"
+                            Value="Hidden" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ConditionalStyle::PieceVisibility"
+               TargetType="Grid">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding State}"
+                             Value="{x:Static local:SquareState.Empty}">
+                    <Setter Property="Visibility"
+                            Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}"
+                             Value="{x:Static local:SquareState.Destination}">
+                    <Setter Property="Visibility"
+                            Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}"
+                             Value="{x:Static local:SquareState.Occupied}">
+                    <Setter Property="Visibility"
+                            Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ConditionalStyle::PieceBorder"
+               TargetType="Ellipse">
+            <Setter Property="Fill"
+                    Value="{StaticResource Color::PieceBlackBorder}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Focus}"
+                             Value="True">
+                    <Setter Property="Fill"
+                            Value="{StaticResource Color::PieceFocusBorder}" />
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Focus}"
+                                   Value="False" />
+                        <Condition Binding="{Binding Piece.Color}"
+                                   Value="{x:Static chklib:Color.Black}" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Fill"
+                            Value="{StaticResource Color::PieceBlackBorder}" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Focus}"
+                                   Value="False" />
+                        <Condition Binding="{Binding Piece.Color}"
+                                   Value="{x:Static chklib:Color.White}" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Fill"
+                            Value="{StaticResource Color::PieceWhiteBorder}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ConditionalStyle::Piece"
+               TargetType="Ellipse">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Piece.Color}"
+                             Value="{x:Static chklib:Color.Black}">
+                    <Setter Property="Fill"
+                            Value="{StaticResource Color::PieceBlack}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Piece.Color}"
+                             Value="{x:Static chklib:Color.White}">
+                    <Setter Property="Fill"
+                            Value="{StaticResource Color::PieceWhite}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ConditionalStyle::PieceCrown"
+               TargetType="Image">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Piece.Type}"
+                             Value="{x:Static chklib:PieceType.Single}">
+                    <Setter Property="Visibility"
+                            Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Piece.Type}"
+                             Value="{x:Static chklib:PieceType.Double}">
+                    <Setter Property="Visibility"
+                            Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Piece.Color}"
+                             Value="{x:Static chklib:Color.Black}">
+                    <Setter Property="Source"
+                            Value="Resources/CrownWhite.png" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Piece.Color}"
+                             Value="{x:Static chklib:Color.White}">
+                    <Setter Property="Source"
+                            Value="Resources/CrownBlack.png" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
         <!--#endregion-->
 
@@ -304,12 +230,17 @@
                                 ImageSource="Resources/Background.png" />
                 </Grid.Background>
 
-                <Border Margin="80,40"
+                <Border Margin="60,60"
                         BorderThickness="16"
                         BorderBrush="{StaticResource Color::ThemeDark}"
                         Width="512"
-                        Height="512"
-                        Effect="{StaticResource Shadow::Container}">
+                        Height="512">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10"
+                                          Opacity="0.7"
+                                          RenderingBias="Quality"
+                                          ShadowDepth="7" />
+                    </Border.Effect>
                     <ItemsControl x:Name="Board"
                                   ItemsSource="{Binding UISquares}">
                         <ItemsControl.ItemsPanel>
@@ -321,13 +252,44 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type local:Square}">
-                                <ContentControl MouseUp="Square_MouseUp"
-                                                MouseEnter="ContentControl_MouseEnter"
-                                                MouseLeave="ContentControl_MouseLeave">
-                                    <Grid Style="{StaticResource Style::SquareFill}">
-                                        <ContentControl Style="{StaticResource Style::Piece}" />
+                                <Grid Style="{StaticResource Style::SquareFill}"
+                                      MouseUp="Square_MouseUp"
+                                      MouseEnter="Square_MouseEnter"
+                                      MouseLeave="Square_MouseLeave">
+
+                                    <!--#region Destionation Target-->
+                                    <Ellipse Style="{StaticResource ConditionalStyle::DestinationVisibility}"
+                                             Fill="#4000"
+                                             Width="12"
+                                             Height="12">
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect BlurRadius="5"
+                                                              ShadowDepth="2"
+                                                              RenderingBias="Quality" />
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <!--#endregion-->
+
+                                    <!--#region Piece-->
+                                    <Grid Style="{StaticResource ConditionalStyle::PieceVisibility}">
+                                        <Ellipse Style="{StaticResource ConditionalStyle::PieceBorder}"
+                                                 Width="40"
+                                                 Height="40">
+                                            <Ellipse.Effect>
+                                                <DropShadowEffect BlurRadius="3"
+                                                                  Opacity=".3"
+                                                                  ShadowDepth="3" />
+                                            </Ellipse.Effect>
+                                        </Ellipse>
+                                        <Ellipse Style="{StaticResource ConditionalStyle::Piece}"
+                                                 Width="34"
+                                                 Height="34" />
+                                        <Image Style="{StaticResource ConditionalStyle::PieceCrown}"
+                                               Width="24" />
                                     </Grid>
-                                </ContentControl>
+                                    <!--#endregion-->
+
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -343,8 +305,7 @@
                   Width="300"
                   Height="180"
                   Visibility="{Binding WinnerPopupVisibility}"
-                  Background="{StaticResource Color::ThemeDark}"
-                  Effect="{StaticResource Shadow::Container}">
+                  Background="{StaticResource Color::ThemeDark}">
                 <TextBlock Style="{StaticResource Style::Text}"
                            FontSize="32"
                            HorizontalAlignment="Center"
@@ -361,8 +322,7 @@
                   Width="300"
                   Height="180"
                   Visibility="{Binding RestartPopupVisibility}"
-                  Background="{StaticResource Color::ThemeDark}"
-                  Effect="{StaticResource Shadow::Container}">
+                  Background="{StaticResource Color::ThemeDark}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1.3*" />

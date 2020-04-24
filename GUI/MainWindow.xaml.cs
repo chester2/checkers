@@ -31,28 +31,28 @@ namespace GUI
 
         private int GetSquareIndex(object sender)
         {
-            var contentPresenter = VisualTreeHelper.GetParent(sender as ContentControl);
+            var contentPresenter = VisualTreeHelper.GetParent(sender as DependencyObject);
             return Board.ItemContainerGenerator.IndexFromContainer(contentPresenter);
         }
 
         private void Square_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            this.ViewModel.HandleSquareClick(this.GetSquareIndex(sender));
+            this.ViewModel.HandleSquareMouseUp(this.GetSquareIndex(sender));
         }
 
-        private void ContentControl_MouseEnter(object sender, MouseEventArgs e)
+        private void Square_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (this.ViewModel.WinnerPopupVisibility != Visibility.Visible
-                && this.ViewModel.RestartPopupVisibility != Visibility.Visible
-                && this.ViewModel.IsMoveStartingPoint(this.GetSquareIndex(sender)))
+            this.ViewModel.HandleSquareMouseEnter(this.GetSquareIndex(sender));
+        }
+
+        private void Square_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // For some reason, squareIndex is -1 immediately after a move.
+            var squareIndex = this.GetSquareIndex(sender);
+            if (squareIndex != -1)
             {
-                Mouse.OverrideCursor = Cursors.Hand;
+                this.ViewModel.HandleSquareMouseLeave(this.GetSquareIndex(sender));
             }
-        }
-
-        private void ContentControl_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = null;
         }
     }
 }

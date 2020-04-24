@@ -14,7 +14,24 @@ namespace GUI
     {
         #region Fields and Properties
         private Bitboard bitboard;
+
         private ulong activePiece;
+        private ulong ActivePiece
+        {
+            get => this.activePiece;
+            set
+            {
+                if (this.activePiece != 0)
+                {
+                    this.UISquares[Bits.ToIndex(this.activePiece)].Focus = false;
+                }
+                this.activePiece = value;
+                if (this.activePiece != 0)
+                {
+                    this.UISquares[Bits.ToIndex(this.activePiece)].Focus = true;
+                }
+            }
+        }
 
         private List<Move> validMoves;
         public bool IsMoveStartingPoint(int squareIndex)
@@ -74,7 +91,10 @@ namespace GUI
         }
         #endregion
 
-        public GameViewModel() => this.NewGame();
+        public GameViewModel()
+        {
+            this.NewGame();
+        }
 
         public void NewGame()
         {
@@ -84,11 +104,12 @@ namespace GUI
             this.bitboard = new Bitboard();
             this.DrawSquares();
             this.SetWhoseTurn();
-            this.activePiece = 0;
+            this.ActivePiece = 0;
             this.validMoves = this.bitboard.GetMoves();
         }
 
-        public void HandleSquareClick(int squareIndex)
+        #region Mouse Events
+        public void HandleSquareMouseUp(int squareIndex)
         {
             // Do nothing if popups are visible.
             if (this.WinnerPopupVisibility == Visibility.Visible
@@ -101,12 +122,12 @@ namespace GUI
             List<Move> possibleMoves;
 
             // No active piece: make clicked piece active if it has valid moves.
-            if (this.activePiece == 0)
+            if (this.ActivePiece == 0)
             {
                 possibleMoves = this.validMoves.Where(m => m.From == square).ToList();
                 if (possibleMoves.Count > 0)
                 {
-                    this.activePiece = square;
+                    this.ActivePiece = square;
                     foreach (var possibleMove in possibleMoves)
                     {
                         this.UISquares[Bits.ToIndex(possibleMove.To)].State = SquareState.Destination;
@@ -117,13 +138,13 @@ namespace GUI
 
             // Filter valid moves for those whose "from" field is the clicked square.
             possibleMoves = this.validMoves
-                .Where(m => (m.From == this.activePiece && m.To == square))
+                .Where(m => (m.From == this.ActivePiece && m.To == square))
                 .ToList();
 
             // Invalid destination for active piece: make active piece inactive and clear destinations from board.
             if (possibleMoves.Count == 0)
             {
-                this.activePiece = 0;
+                this.ActivePiece = 0;
                 foreach (var uiSquare in this.UISquares)
                 {
                     if (uiSquare.State != SquareState.Occupied)
@@ -133,21 +154,21 @@ namespace GUI
                 }
 
                 // If the clicked square is a piece belonging to the current side, make that piece the new active piece.
-                this.HandleSquareClick(squareIndex);
+                this.HandleSquareMouseUp(squareIndex);
                 return;
             }
 
             // Apply move and update UI.
             var move = possibleMoves[0];
             var followupMoves = bitboard.ApplyMove(move);
+            this.ActivePiece = 0;
             this.DrawSquares();
-            this.activePiece = 0;
 
             // Multijump followup.
             if (followupMoves.Count > 0)
             {
                 this.validMoves = followupMoves;
-                this.HandleSquareClick(Bits.ToIndex(move.To));
+                this.HandleSquareMouseUp(Bits.ToIndex(move.To));
                 return;
             }
 
@@ -160,6 +181,35 @@ namespace GUI
                 this.WinnerPopupVisibility = Visibility.Visible;
             }
         }
+
+        public void HandleSquareMouseEnter(int squareIndex)
+        {
+            if (this.WinnerPopupVisibility == Visibility.Visible
+                || this.RestartPopupVisibility == Visibility.Visible)
+            {
+                return;
+            }
+
+            if (this.validMoves.Any(m => m.From == Bits.FromIndex(squareIndex)))
+            {
+                this.UISquares[squareIndex].Focus = true;
+            }
+        }
+
+        public void HandleSquareMouseLeave(int squareIndex)
+        {
+            if (this.WinnerPopupVisibility == Visibility.Visible
+                || this.RestartPopupVisibility == Visibility.Visible)
+            {
+                return;
+            }
+
+            if (Bits.FromIndex(squareIndex) != this.ActivePiece)
+            {
+                this.UISquares[squareIndex].Focus = false;
+            }
+        }
+        #endregion
 
         #region Button Events
         public ICommand RestartCommand
