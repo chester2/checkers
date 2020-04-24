@@ -56,6 +56,23 @@ namespace Lib
             this[Color.White, PieceType.Single] = 0x55aa550000000000UL;
         }
 
+        private Bitboard(Bitboard bitboard)
+        {
+            this.ColorToMove = bitboard.ColorToMove;
+            foreach (var color in Util.EnumerateEnum<Color>())
+            {
+                foreach (var pt in Util.EnumerateEnum<PieceType>())
+                {
+                    this[color, pt] = bitboard[color, pt];
+                }
+            }
+        }
+
+        public Bitboard DeepCopy()
+        {
+            return new Bitboard(this);
+        }
+
         public Bitboard(string fen)
         {
             this.ColorToMove = (fen[0] == Color.Black.ToChar())
@@ -101,6 +118,31 @@ namespace Lib
             return sb.ToString();
         }
         #endregion
+
+        public ulong Perft(int depth) => this.Perft(depth, null);
+        private ulong Perft(int depth, List<Move> followups)
+        {
+            if (depth == 0) return 1;
+
+            var moves = (followups != null && followups.Count > 0) ? followups : this.GetMoves();
+            if (depth == 1) return (ulong)moves.Count;
+
+            var _nodes = 0UL;
+            foreach (var move in moves)
+            {
+                var nextbb = this.DeepCopy();
+                followups = nextbb.ApplyMove(move);
+                if (followups.Count > 0)
+                {
+                    _nodes += nextbb.Perft(depth, followups);
+                }
+                else
+                {
+                    _nodes += nextbb.Perft(depth - 1, null);
+                }
+            }
+            return _nodes;
+        }
 
         #region Indexers
         public ulong this[Piece piece]
@@ -223,16 +265,13 @@ namespace Lib
         private List<Move> GetMoves(Color color)
         {
             var moves = this.GetJumps(color);
-            if (moves.Count > 0)
-                return moves;
-            return this.GetQuiets(color);
+            return (moves.Count > 0) ? moves : this.GetQuiets(color);
         }
 
         /// <summary>
         /// Return all possible moves for the current color.
         /// </summary>
-        public List<Move> GetMoves()
-            => this.GetMoves(this.ColorToMove);
+        public List<Move> GetMoves() => this.GetMoves(this.ColorToMove);
 
         /// <summary>
         /// Apply a move. The given move must be an element of the list returned by <c>GetMoves()</c>. If the move is a jump and further jumps are possible, return a list of possible followup moves. Return an empty list otherwise or if the given move is not a jump.
