@@ -2,3 +2,4 @@
 packages/
 **/[Bb]in/
 **/[Oo]bj/
+**/*.csproj.user
